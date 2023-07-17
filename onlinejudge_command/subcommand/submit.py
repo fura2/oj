@@ -7,6 +7,8 @@ import webbrowser
 from logging import getLogger
 from typing import *
 
+import toml
+
 import onlinejudge.dispatch as dispatch
 import onlinejudge_command.download_history
 import onlinejudge_command.pretty_printers as pretty_printers
@@ -14,6 +16,8 @@ import onlinejudge_command.utils as utils
 from onlinejudge.type import *
 
 logger = getLogger(__name__)
+
+CONFIG_PATH = pathlib.Path('/Users/naon/oj/config.toml')
 
 
 def add_subparser(subparsers: argparse.Action) -> None:
@@ -44,8 +48,8 @@ tips:
     subparser.add_argument('--guess-python-interpreter', choices=('cpython', 'pypy', 'all'), default='cpython', help='use the specified Python interpreter if both of CPython and PyPy are available (default: cpython)')
     subparser.add_argument('--no-open', action='store_false', dest='open')
     subparser.add_argument('--open', action='store_true', default=True, help='open the result page after submission (default)')
-    subparser.add_argument('-w', '--wait', metavar='SECOND', type=float, default=3, help='sleep before submitting')
-    subparser.add_argument('-y', '--yes', action='store_true', help='don\'t confirm')
+    subparser.add_argument('-w', '--wait', metavar='SECOND', type=float, default=0, help='sleep before submitting')
+    subparser.add_argument('-y', '--yes', action='store_true', default=True, help='don\'t confirm')
 
 
 def run(args: argparse.Namespace) -> bool:
@@ -78,9 +82,18 @@ def run(args: argparse.Namespace) -> bool:
     with args.file.open('rb') as fh:
         code: bytes = fh.read()
 
+    # expand template.hpp
+    KEY_PHRASE = '#include "template.hpp"'
+    if code.decode('utf-8').split('\n')[0] == KEY_PHRASE:
+        config = toml.load(CONFIG_PATH)
+        with pathlib.Path(config['template_path']).open('rb') as file:
+            header = file.read()
+        code = header + code[len(KEY_PHRASE):]
+        logger.info(f'embedded template.hpp')
+
     # report code
-    logger.info('code (%d byte):', len(code))
-    logger.info(utils.NO_HEADER + '%s', pretty_printers.make_pretty_large_file_content(code, limit=30, head=10, tail=10))
+    # logger.info('code (%d byte):', len(code))
+    # logger.info(utils.NO_HEADER + '%s', pretty_printers.make_pretty_large_file_content(code, limit=30, head=10, tail=10))
 
     with utils.new_session_with_our_user_agent(path=args.cookie) as sess:
         # check the login status

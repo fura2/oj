@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import pathlib
+import shutil
 import textwrap
 from logging import getLogger
 from typing import *
@@ -129,6 +130,9 @@ def run(args: argparse.Namespace) -> bool:
     if not samples:
         logger.error("Sample not found")
         return False
+
+    # remove existing test/ directory
+    shutil.rmtree(args.directory, ignore_errors=True)
 
     # append the history for submit subcommand
     if not args.dry_run and is_default_format:
