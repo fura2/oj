@@ -27,7 +27,7 @@ Note that this does not agree with [the original concept of oj](https://github.c
 主に次の機能を追加/変更した。
 
 - ダウンロード `oj d`
-  - サンプルダウンロード時に、既に存在する `test/` ディレクトリを削除するようにした。
+  - サンプルテストケースのダウンロード時に、既に存在する `test/` ディレクトリを削除するようにした。
 - 提出 `oj s`
   - 提出するコードの1行目が `#include "template.hpp"` だった場合、その行を [template.hpp](https://github.com/fura2/competitive-programming-library/blob/main/library/template/template.hpp) の中身に置換するようにした。
   - [y/N]を入力するステップを省略した。
