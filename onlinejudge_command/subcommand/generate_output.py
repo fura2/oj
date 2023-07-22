@@ -16,7 +16,7 @@ logger = getLogger(__name__)
 
 def add_subparser(subparsers: argparse.Action) -> None:
     subparsers_add_parser: Callable[..., argparse.ArgumentParser] = subparsers.add_parser  # type: ignore
-    subparser = subparsers_add_parser('generate-output', aliases=['g/o'], help='generate output files from input and reference implementation', formatter_class=argparse.RawTextHelpFormatter, epilog='''\
+    subparser = subparsers_add_parser('generate-output', aliases=['g/o', 'go'], help='generate output files from input and reference implementation', formatter_class=argparse.RawTextHelpFormatter, epilog='''\
 format string for --format:
   %s                    name
   %e                    extension: "in" or "out"

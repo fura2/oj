@@ -19,7 +19,7 @@ logger = getLogger(__name__)
 
 def add_subparser(subparsers: argparse.Action) -> None:
     subparsers_add_parser: Callable[..., argparse.ArgumentParser] = subparsers.add_parser  # type: ignore
-    subparser = subparsers_add_parser('generate-input', aliases=['g/i'], help='generate input files from given generator', formatter_class=argparse.RawTextHelpFormatter, epilog='''\
+    subparser = subparsers_add_parser('generate-input', aliases=['g/i', 'gi'], help='generate input files from given generator', formatter_class=argparse.RawTextHelpFormatter, epilog='''\
 format string for --format:
   %s                    name
   %e                    extension: "in" or "out"

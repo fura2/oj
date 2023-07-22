@@ -1,1 +1,2 @@
-template_path = "/PATH/TO/template.hpp"
+template_cpp_path = "/PATH/TO/template.cpp"
+template_hpp_path = "/PATH/TO/template.hpp"

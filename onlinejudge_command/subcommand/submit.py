@@ -82,14 +82,24 @@ def run(args: argparse.Namespace) -> bool:
     with args.file.open('rb') as fh:
         code: bytes = fh.read()
 
+    # ensure that you are not about to submit a wrong file
+    config = toml.load(CONFIG_PATH)
+    with pathlib.Path(config['template_cpp_path']).open('rb') as file:
+        template_cpp = file.read()
+        if code == template_cpp:
+            logger.error('You may try to submit a wrong file. The file is identical to template.cpp')
+            return False
+
     # expand template.hpp
     KEY_PHRASE = '#include "template.hpp"'
-    if code.decode('utf-8').split('\n')[0] == KEY_PHRASE:
-        config = toml.load(CONFIG_PATH)
-        with pathlib.Path(config['template_path']).open('rb') as file:
-            header = file.read()
-        code = header + code[len(KEY_PHRASE):]
-        logger.info(f'embedded template.hpp')
+    code = code.decode('utf-8').split('\n')
+    for i, line in enumerate(code):
+        if line == KEY_PHRASE:
+            with pathlib.Path(config['template_hpp_path']).open('rb') as file:
+                template_hpp = file.read()
+            code[i] = template_hpp.decode('utf-8')
+            logger.info('embedded template.hpp')
+    code = '\n'.join(code).encode('utf-8')
 
     # report code
     # logger.info('code (%d byte):', len(code))
